@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-list cities_by_state
+takes name as an argument
 """
 import MySQLdb
 import sys
@@ -16,12 +16,14 @@ if __name__ == "__main__":
 
     cur = db.cursor()
     cur.execute(
-        """SELECT cities.id, cities.name, states.name FROM
+        """SELECT cities.name FROM
                 cities INNER JOIN states ON states.id=cities.state_id
-                ORDER BY cities.id ASC"""
+                WHERE states.name=%s
+                ORDER BY cities.id ASC""",
+        (sys.argv[4],),
     )
     rows = cur.fetchall()
-    for row in rows:
-        print(row)
+    new_list = list(row[0] for row in rows)
+    print(", ".join(new_list))
     cur.close()
     db.close()
